@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  userId        String         @id @default(uuid()) @unique
+  noTelp        String         @unique
+  password      String
+  nama          String
+  provinsi      String          
+  kota          String
+  kecamatan     String
+  alamat        String
+  refreshTokens RefreshToken[] @relation("UserRefreshToken")
+  post          Post[]         @relation("UserPosts")
+}
+
+model Post {
+  postId      String  @id @default(uuid()) @unique
+  jenisTernak String
+  jenisAksi   String
+  keterangan  String?
+  latitude    String
+  longitude   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  petugas     String
+  status      String
+  userId      String  
+  user        User     @relation("UserPosts", fields: [userId], references: [userId], onDelete: Cascade)
+}
+
+model RefreshToken {   // gausah pake, tokennya dilamain
+  id          String   @id @unique @default(uuid())
+  hashedToken String
+  userId      String
+  user        User     @relation("UserRefreshToken", fields: [userId], references: [userId], onDelete: Cascade)
+  revoked     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
