@@ -1,1 +1,1 @@
-# tanum-backend-android
+# ternak-app-be v2
