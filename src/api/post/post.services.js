@@ -8,7 +8,16 @@ function addNewPost(post) {
 }
 
 function getAllPosts() {
-    return db.post.findMany();
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+
+    return db.post.findMany({
+        where: {
+            createdAt: {
+                gte: oneYearAgo,
+            },
+        },
+    });
 }
 
 function getAllPostsByUserId(userId) {

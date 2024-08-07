@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 const express = require('express');
-
 const router = express.Router();
 const httpServer = require('http').createServer(router);
 
@@ -17,7 +16,7 @@ function errorHandler(err, req, res, next) {
   res.json({
     status: false,
     message: err.message,
-    stack: process.env.NODE_ENV === 'production' ? null : err.stack,
+    //stack: process.env.NODE_ENV === 'production' ? null : err.stack,
   });
 }
 
@@ -26,7 +25,7 @@ function isAuthenticated(req, res, next) {
 
   if (!authorization) {
     res.status(401);
-    throw new Error('Un-Authorized, you are not authenticated');
+    throw new Error('Pengguna tidak terautentifikasi');
   }
 
   try {
@@ -41,7 +40,7 @@ function isAuthenticated(req, res, next) {
     if (err.name === 'TokenExpiredError') {
       throw new Error(err.name);
     }
-    throw new Error('Un-Authorized');
+    throw new Error('Tidak terautentifikasi');
   }
   return next();
 }

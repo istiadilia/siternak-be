@@ -23,8 +23,10 @@ model User {
 model Post {
   postId      String  @id @default(uuid()) @unique
   jenisTernak String
+  jumlahTernak  String
   jenisAksi   String
-  keterangan  String?
+  keteranganAksi  String
+  alamatAksi  String
   latitude    String
   longitude   String
   createdAt   DateTime @default(now())

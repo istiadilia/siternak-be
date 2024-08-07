@@ -1,16 +1,17 @@
 const jwt = require('jsonwebtoken');
 
-// Usually I keep the token between 5 minutes - 15 minutes
+// Access token is used to access protected routes.
+// If it expires, the user must log in again.
+// 1y is not ideal, but you need to change this value depending on your app logic.
 function generateAccessToken(user) {
   return jwt.sign({ userId: user.userId }, process.env.JWT_ACCESS_SECRET, {
     expiresIn: '1y',
   });
 }
 
-// I choosed 8h because i prefer to make the user login again each day.
-// But keep him logged in if he is using the app.
+// Refresh token will be created if the access token expires.
+// But, in this code, refresh token is not implemented yet in the front end logic.
 // You can change this value depending on your app logic.
-// I would go for a maximum of 7 days, and make him login again after 7 days of inactivity.
 function generateRefreshToken(user, jti) {
   return jwt.sign(
     {

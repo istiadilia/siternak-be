@@ -1,28 +1,41 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
+const router = express.Router();
 
+const { addRefreshTokenToWhitelist } = require('./auth.services');
+const { generateTokens } = require('../../utils/jwt');
 const {
   findUserByPhone,
   createUser,
 } = require('../users/users.services');
-const {
-  addRefreshTokenToWhitelist,
-  findRefreshTokenById,
-  deleteRefreshToken,
-  revokeTokens,
-} = require('./auth.services');
-
-const { generateTokens } = require('../../utils/jwt');
-const { hashToken } = require('../../utils/hashtoken');
-
-const router = express.Router();
 
 router.post('/register', async (req, res, next) => {
   try {
     const { nama, noTelp, password, provinsi, kota, kecamatan, alamat } = req.body;
     if (!noTelp || !password || !nama || !provinsi || !kota || !kecamatan || !alamat) {
+      res.status(400);
+      throw new Error('Semua data harus diisi');
+    }
+
+    const cleanPhoneNumber = (phoneNumber) => {
+      return phoneNumber.replace(/\D/g, '');
+    };
+
+    const cleanedNoTelp = cleanPhoneNumber(noTelp);
+
+    // Validasi nomor telepon
+    if (cleanedNoTelp.length < 10 || cleanedNoTelp.length > 15) {
+      res.status(400);
+      throw new Error('Nomor telepon tidak memenuhi kriteria');
+    }
+
+    if (!/^\d+$/.test(cleanedNoTelp)) {
+      res.status(400);
+      throw new Error('Nomor telepon tidak memenuhi kriteria');
+    }
+
+    if (!cleanedNoTelp || !password || !nama || !provinsi || !kota || !kecamatan || !alamat) {
       res.status(400);
       throw new Error('Semua data harus diisi');
     }
